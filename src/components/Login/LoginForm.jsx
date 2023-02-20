@@ -3,19 +3,24 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { loginUser } from "../../api/user";
 import { storageSave } from "../../utils/storage";
-import { useHistory } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { STORAGE_KEY_USER } from "../../const/storageKey";
 
 const usernameConfig = {
   required: true,
   minLength: 3,
 };
 
-function LoginForm() {
+const LoginForm = () => {
+  // Hooks
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { user, setUser } = useUser()
+  const navigate = useNavigate()
 
   // Local State
   const [loading, setLoading] = useState(false);
@@ -23,25 +28,26 @@ function LoginForm() {
 
   // Side Effects
   useEffect(() => {
-    
-  }, []) // Empty Deps - Only run once
+    if(user !== null){
+      navigate('profile')
+    }
+  }, [user, navigate]); // Empty Deps - Only run once
 
   // Event Handlers
-
-  // Render Functions
-
   const onSubmit = async ({ username }) => {
     setLoading(true);
-    const [error, user] = await loginUser(username);
+    const [error, userResponse] = await loginUser(username);
     if (error !== null) {
       setApiError(error);
     }
-    if (user !== null) {
-      storageSave("coffee-user", user);
+    if (userResponse !== null) {
+      storageSave(STORAGE_KEY_USER, userResponse);
+      setUser(userResponse);
     }
     setLoading(false);
   };
 
+  // Render Functions
   const errorMessage = (() => {
     if (!errors.username) {
       return null;
@@ -78,6 +84,6 @@ function LoginForm() {
       </form>
     </>
   );
-}
+};
 
 export default LoginForm;
