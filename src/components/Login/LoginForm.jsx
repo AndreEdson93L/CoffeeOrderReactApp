@@ -1,9 +1,13 @@
-import { useForm } from "react-hook-form";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { loginUser } from "../../api/user";
+import { storageSave } from "../../utils/storage";
+import { useHistory } from "react-router-dom";
 
 const usernameConfig = {
   required: true,
-  minLength: 2,
+  minLength: 3,
 };
 
 function LoginForm() {
@@ -13,11 +17,30 @@ function LoginForm() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("data: " + data);
-  };
+  // Local State
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
-  console.log("errors: " + errors);
+  // Side Effects
+  useEffect(() => {
+    
+  }, []) // Empty Deps - Only run once
+
+  // Event Handlers
+
+  // Render Functions
+
+  const onSubmit = async ({ username }) => {
+    setLoading(true);
+    const [error, user] = await loginUser(username);
+    if (error !== null) {
+      setApiError(error);
+    }
+    if (user !== null) {
+      storageSave("coffee-user", user);
+    }
+    setLoading(false);
+  };
 
   const errorMessage = (() => {
     if (!errors.username) {
@@ -29,7 +52,7 @@ function LoginForm() {
     }
 
     if (errors.username.type === "minLength") {
-      return <span>MinLength is required of two characters is required</span>;
+      return <span>MinLength is required of 3 characters is required</span>;
     }
   })();
 
@@ -41,20 +64,20 @@ function LoginForm() {
           <label htmlFor="username">Username: </label>
           <input
             type="text"
-            placeholder="username"
+            placeholder="johndoe"
             {...register("username", usernameConfig)}
           />
           {errorMessage}
         </fieldset>
 
-        <button type="submit">Continue</button>
+        <button type="submit" disabled={loading}>
+          Continue
+        </button>
+        {loading && <p>Loggin in...</p>}
+        {apiError && <p>{apiError}</p>}
       </form>
     </>
   );
 }
 
 export default LoginForm;
-
-/*
-{ (errors.username && errors.username.type === 'required') && <span>Username is required</span>}
-{ (errors.username && errors.username.type === 'minLength') && <span>MinLength is required (3 chars)</span>}*/
