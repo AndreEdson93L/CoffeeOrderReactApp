@@ -1,21 +1,28 @@
 import { createHeaders } from "./index";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+//const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl =
+  "https://ael-lost-in-translation-api-production.up.railway.app/coffee";
 
 export const checkForUser = async (username) => {
-    try {
-      const response = await fetch(`${apiUrl}?username=${username}`);
-      if (!response.ok) {
-        throw new Error("Could not complete request");
-      }
-  
+  try {
+    const response = await fetch(`${apiUrl}?username=${username}`);
+
+    if (!response.ok) {
+      throw new Error("Could not complete request");
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
       const data = await response.json();
       return [null, data];
-    } catch (error) {
-      return [error.message, []];
+    } else {
+      throw new TypeError("Response was not in JSON format");
     }
-  };
-  
+  } catch (error) {
+    return [error.message, []];
+  }
+};
 
 export const createUser = async (username) => {
   try {

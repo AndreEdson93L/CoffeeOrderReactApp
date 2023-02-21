@@ -10,7 +10,6 @@ import Navbar from "./components/navbar/Navbar";
 //npm i react-hook-form
 
 function App() {
-  //console.log(process.env.REACT_APP_API_KEY);
 
   return (
     <BrowserRouter>

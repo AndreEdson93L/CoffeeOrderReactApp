@@ -14,13 +14,14 @@ const usernameConfig = {
 
 const LoginForm = () => {
   // Hooks
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { user, setUser } = useUser()
-  const navigate = useNavigate()
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
 
   // Local State
   const [loading, setLoading] = useState(false);
@@ -28,8 +29,8 @@ const LoginForm = () => {
 
   // Side Effects
   useEffect(() => {
-    if(user !== null){
-      navigate('profile')
+    if (user !== null) {
+      navigate("profile");
     }
   }, [user, navigate]); // Empty Deps - Only run once
 

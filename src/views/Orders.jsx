@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import OrdersForm from "../components/Orders/OrdersForm";
 import withAuth from "../hoc/withAuth";
+import OrdersCoffeeButton from "../components/Orders/OrdersCoffeeButton";
 
 const COFFEES = [
   {
